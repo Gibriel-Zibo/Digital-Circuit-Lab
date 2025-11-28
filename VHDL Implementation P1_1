@@ -1,0 +1,26 @@
+library IEEE;
+use IEEE.std_logic_1164.all;
+
+entity adder is
+  port (
+    A  : in  std_logic_vector(7 downto 0);
+    B  : in  std_logic_vector(7 downto 0);
+    Ci : in  std_logic;
+    S  : out std_logic_vector(7 downto 0);
+    Co : out std_logic
+  );
+end entity;
+
+architecture behav of adder is
+  signal C : std_logic_vector(8 downto 0);
+begin
+  C(0) <= Ci;
+  process(A, B, Ci)
+  begin
+    for i in 0 to 7 loop
+      S(i)   <= A(i) xor B(i) xor C(i);
+      C(i+1) <= (A(i) and B(i)) or (C(i) and (A(i) xor B(i)));
+    end loop;
+    Co <= C(8);
+  end process;
+end architecture;
