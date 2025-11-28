@@ -1,0 +1,58 @@
+library IEEE;
+use IEEE.std_logic_1164.all;
+
+entity addsub is
+    port(
+        A   : in  std_logic_vector(7 downto 0);
+        B   : in  std_logic_vector(7 downto 0);
+        sel : in  std_logic; -- 0=add, 1=sub
+        S   : out std_logic_vector(7 downto 0);
+        C   : out std_logic; -- carry flag
+        V   : out std_logic; -- overflow flag
+        N   : out std_logic; -- negative flag
+        Z   : out std_logic  -- zero flag
+    );
+end entity;
+
+architecture rtl of addsub is
+begin
+    process(A, B, sel)
+        variable B_eff  : std_logic_vector(7 downto 0);
+        variable ci_eff : std_logic;
+        variable c_v    : std_logic;
+        variable S_v    : std_logic_vector(7 downto 0);
+        variable co_int : std_logic;
+        variable C7     : std_logic;
+    begin
+        -- Select operand B and carry-in
+        if sel = '0' then
+            B_eff  := B;
+            ci_eff := '0';
+        else
+            B_eff  := not B;
+            ci_eff := '1';
+        end if;
+
+        -- Ripple-carry adder logic
+        c_v := ci_eff;
+        for i in 0 to 7 loop
+            S_v(i) := A(i) xor B_eff(i) xor c_v;
+            c_v    := (A(i) and B_eff(i)) or (c_v and (A(i) xor B_eff(i)));
+            if i = 6 then
+                C7 := c_v; -- carry into MSB
+            end if;
+        end loop;
+        co_int := c_v;
+
+        -- Assign outputs
+        S <= S_v;
+        C <= co_int;
+        V <= co_int xor C7;
+        N <= S_v(7);
+        if S_v = "00000000" then
+            Z <= '1';
+        else
+            Z <= '0';
+        end if;
+    end process;
+end architecture;
