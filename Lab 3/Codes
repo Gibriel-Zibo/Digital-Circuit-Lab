@@ -1,1 +1,28 @@
+delta : process(counter_cs, SW)
+    variable digit     : unsigned(3 downto 0);
+    variable sw_max    : unsigned(3 downto 0);
+    variable max_state : unsigned(3 downto 0);
+begin
+    digit  := counter_cs(29 downto 26);
+    sw_max := unsigned(SW(3 downto 0));
 
+    -- Clamp maximum to 9 (decimal)
+    if sw_max >= "1001" then
+        max_state := "1001";
+    else
+        max_state := sw_max;
+    end if;
+
+    -- If max is zero → stay at zero
+    if max_state = "0000" then
+        counter_ns <= (others => '0');
+
+    -- If digit reached max → wrap
+    elsif digit = max_state then
+        counter_ns <= (others => '0');
+
+    -- Otherwise increment
+    else
+        counter_ns <= counter_cs + 1;
+    end if;
+end process;
