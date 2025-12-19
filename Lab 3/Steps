@@ -63,7 +63,7 @@ end process;
 -----------------------------------------
 delta : process(counter_cs)
 begin
-    if counter_cs(29 downto 26) = "1001" then  -- 9
+    if counter_cs(29 downto 26) = "1001" then  -- 10
         counter_ns <= (others => '0');        -- wrap to 0
     else
         counter_ns <= counter_cs + 1;
