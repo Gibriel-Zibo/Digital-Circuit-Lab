@@ -40,17 +40,6 @@ begin
   end case;
 end process;
 
------------------------------------------
-delta : process(counter_cs)
-begin
-    if counter_cs(29 downto 26) = "1001" then  -- 9
-        counter_ns <= (others => '0');        -- wrap to 0
-    else
-        counter_ns <= counter_cs + 1;
-    end if;
-end process;
-
-
 --lambda Process: Drives outputs based on the active state. Each digit gets its turn -----
 
 process(current_state, digit0, digit1, digit2, digit3)
@@ -71,5 +60,13 @@ begin
   end case;
 end process;
 
-
+-----------------------------------------
+delta : process(counter_cs)
+begin
+    if counter_cs(29 downto 26) = "1001" then  -- 9
+        counter_ns <= (others => '0');        -- wrap to 0
+    else
+        counter_ns <= counter_cs + 1;
+    end if;
+end process;
 
