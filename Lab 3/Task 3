@@ -1,0 +1,156 @@
+------------------------------------------------------------------
+--
+-- [IE3-DI] Digital Circuits Winter Term 2025
+--			Exercise 3
+--
+-- @name:   seven_segment.vhd
+-- @author: 
+-- @description: control unit for the seven segment display of the 
+--               basys 3 board
+--				 DESIGN FILE
+--
+-- (c) 2025 HAW Hamburg
+--
+------------------------------------------------------------------
+
+---------------------------------------------
+-- libraries
+library ieee;
+use ieee.std_logic_1164.all;
+use IEEE.NUMERIC_STD.all;
+
+---------------------------------------------
+-- entity
+entity seven_segment is
+    Port ( clk : in STD_LOGIC;
+           rst : in STD_LOGIC;
+           
+           LEDs : out STD_LOGIC_VECTOR(7 downto 0); -- Output 8 bits: Controls individual segments CA-CG and the Decimal Point (DP).
+           DIGIT_select : out STD_LOGIC_VECTOR(3 downto 0); -- Output, 4 bits: The 'one-hot'selection AN0-AN3 for checking which of the digits is turned on.
+           SW : in STD_LOGIC_VECTOR(7 downto 0) -- Input, 8 bits: The physical slide switches. For input values to be displayed.
+           
+           );
+end seven_segment;
+
+
+---------------------------------------------
+-- architecture
+architecture rtl of seven_segment is
+type state_type is (S0, S1, S2, S3);
+signal current_state : state_type := S0;
+signal next_state    : state_type;
+signal counter_cs, counter_ns : unsigned(29 downto 0);
+signal max_value : unsigned (3 downto 0);
+---------------------------------------------
+-- signal declaration
+
+-- TODO: Preparation: Update the bit patterns of the constants for the 7-segment LEDs
+constant ZERO : std_logic_vector(7 downto 0)  := "11000000";
+constant ONE : std_logic_vector(7 downto 0)   := "11111001";
+constant TWO : std_logic_vector(7 downto 0)   := "10100100";
+constant THREE : std_logic_vector(7 downto 0) := "10110000";
+constant FOUR : std_logic_vector(7 downto 0)  := "10011001";
+constant FIVE : std_logic_vector(7 downto 0)  := "10010010";
+constant SIX : std_logic_vector(7 downto 0)   := "10000010";
+constant SEVEN : std_logic_vector(7 downto 0) := "11111000";
+constant EIGHT : std_logic_vector(7 downto 0) := "10000000";
+constant NINE : std_logic_vector(7 downto 0)  := "10010000";
+
+--FSM Structure Overview---
+begin
+
+    ---------------------------------
+    -- sequential process-- Stores the state or Updates currrent state on the rising edge of the clk. Also handle the rst signal----
+    
+    sync : process(clk, rst)
+    begin
+    -- TODO
+        if rst = '1' then
+           counter_cs <= (others => '0');
+         elsif rising_edge(clk) then 
+            counter_cs <= counter_ns;
+         end if;
+         
+    end process;
+
+    ---------------------------------
+    -- combinatorial process delta -- Determines the next stage. DIG1 -> DIG2 -----
+    delta : process(counter_cs)
+    
+     variable max : unsigned (3 downto 0);
+     variable sw_max : unsigned(3 downto 0); 
+     variable max_state : unsigned(3 downto 0);
+     
+    begin
+    
+    -- TODO
+   max:= counter_cs(29 downto 26);
+   sw_max := unsigned(sw(3 downto 0));
+    
+  
+    if sw_max >= "1001" then
+        max_state := "1001";
+    else
+        max_state := sw_max;
+    
+    if max > max_state then
+    counter_ns <= (others => '0');
+    
+    elsif (max = max_state) and (counter_cs(25 downto 0) = (25 downto 0 => '1')) then
+    counter_ns <= (others =>'0');
+    
+    else 
+    
+        counter_ns <= counter_cs + 1;
+    end if;
+    
+    end process;
+
+
+    ---------------------------------
+    -- combinatorial process lambda -- Determines the output 
+    lambda : process(counter_cs)
+    begin
+    
+    -- TODO
+    DIGIT_select <= "0000";
+        LEDs <= ZERO;
+        
+       case counter_cs(29 downto 26) is
+        
+       when "0000" =>
+       LEDs <= ZERO;
+       
+       when "0001" =>
+       LEDs <= ONE;
+        
+       when "0010" =>
+       LEDs <= TWO;
+       
+       when "0011" =>
+       LEDs <= THREE;
+       
+       when "0100" =>
+       LEDs <= FOUR;
+       
+       when "0101" =>
+       LEDs <= FIVE;
+       
+       when "0110" =>
+       LEDs <= SIX;
+       
+       when "0111" =>
+       LEDs <= SEVEN;
+       
+       when "1000" =>
+       LEDs <= EIGHT;
+       
+       when "1001" =>
+       LEDs <= NINE;
+       
+       when others =>
+       LEDs <= ZERO;
+       
+       end case;
+    end process;
+end rtl;
