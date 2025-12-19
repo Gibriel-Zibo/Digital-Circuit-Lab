@@ -1,0 +1,86 @@
+------------------------------------------------------------------
+--
+-- [IE3-DI] Digital Circuits Winter Term 2025
+--			Exercise 3
+--
+-- @name:   seven_segment.vhd
+-- @author: 
+-- @description: control unit for the seven segment display of the 
+--               basys 3 board
+--				 DESIGN FILE
+--
+-- (c) 2025 HAW Hamburg
+--
+------------------------------------------------------------------
+
+---------------------------------------------
+-- libraries
+library ieee;
+use ieee.std_logic_1164.all;
+use IEEE.NUMERIC_STD.all;
+
+---------------------------------------------
+-- entity
+entity seven_segment is
+    Port ( clk : in STD_LOGIC;
+           rst : in STD_LOGIC;
+           
+           LEDs : out STD_LOGIC_VECTOR(7 downto 0); -- Output 8 bits: Controls individual segments CA-CG and the Decimal Point (DP).
+           DIGIT_select : out STD_LOGIC_VECTOR(3 downto 0); -- Output, 4 bits: The 'one-hot'selection AN0-AN3 for checking which of the digits is turned on.
+           SW : in STD_LOGIC_VECTOR(7 downto 0) -- Input, 8 bits: The physical slide switches. For input values to be displayed.
+           
+           );
+end seven_segment;
+
+
+---------------------------------------------
+-- architecture
+architecture rtl of seven_segment is
+
+
+---------------------------------------------
+-- signal declaration
+
+-- TODO: Preparation: Update the bit patterns of the constants for the 7-segment LEDs
+constant ZERO : std_logic_vector(7 downto 0)  := "00000011";
+constant ONE : std_logic_vector(7 downto 0)   := "10011111";
+constant TWO : std_logic_vector(7 downto 0)   := "00100101";
+constant THREE : std_logic_vector(7 downto 0) := "00001101";
+constant FOUR : std_logic_vector(7 downto 0)  := "10011001";
+constant FIVE : std_logic_vector(7 downto 0)  := "01001001";
+constant SIX : std_logic_vector(7 downto 0)   := "01000001";
+constant SEVEN : std_logic_vector(7 downto 0) := "00011111";
+constant EIGHT : std_logic_vector(7 downto 0) := "00000001";
+constant NINE : std_logic_vector(7 downto 0)  := "00011001"
+
+--FSM Structure Overview---
+begin
+
+---------------------------------
+-- sequential process-- Stores the state or Updates currrent state on the rising edge of the clk. Also handle the rst signal----
+
+sync : process
+begin
+
+-- TODO
+
+end process;
+
+---------------------------------
+-- combinatorial process delta -- Determines the next stage. DIG1 -> DIG2 -----
+delta : process
+begin
+
+-- TODO
+
+end process;
+
+
+---------------------------------
+-- combinatorial process lambda -- Determines the output 
+lambda : process
+begin
+
+-- TODO
+
+end process;
