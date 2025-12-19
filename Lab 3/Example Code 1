@@ -1,0 +1,92 @@
+architecture rtl of seven_segment is
+
+    -- FSM state definition
+    type state_type is (DIG0, DIG1, DIG2, DIG3);
+    signal state, next_state : state_type;
+
+    -- internal signals
+    signal digit_value : std_logic_vector(3 downto 0);
+
+    ---------------------------------------------
+    -- 7-segment patterns (common anode, DP = bit 0)
+    constant ZERO  : std_logic_vector(7 downto 0) := "00000011";
+    constant ONE   : std_logic_vector(7 downto 0) := "10011111";
+    constant TWO   : std_logic_vector(7 downto 0) := "00100101";
+    constant THREE : std_logic_vector(7 downto 0) := "00001101";
+    constant FOUR  : std_logic_vector(7 downto 0) := "10011001";
+    constant FIVE  : std_logic_vector(7 downto 0) := "01001001";
+    constant SIX   : std_logic_vector(7 downto 0) := "01000001";
+    constant SEVEN : std_logic_vector(7 downto 0) := "00011111";
+    constant EIGHT : std_logic_vector(7 downto 0) := "00000001";
+    constant NINE  : std_logic_vector(7 downto 0) := "00011001";
+    constant BLANK : std_logic_vector(7 downto 0) := "11111111";
+
+begin
+
+---------------------------------------------
+-- Sequential process (state register)
+sync : process(clk, rst)
+begin
+    if rst = '1' then
+        state <= DIG0;
+    elsif rising_edge(clk) then
+        state <= next_state;
+    end if;
+end process;
+
+---------------------------------------------
+-- Combinatorial process (next-state logic)
+delta : process(state)
+begin
+    case state is
+        when DIG0 => next_state <= DIG1;
+        when DIG1 => next_state <= DIG2;
+        when DIG2 => next_state <= DIG3;
+        when DIG3 => next_state <= DIG0;
+    end case;
+end process;
+
+---------------------------------------------
+-- Combinatorial process (output logic)
+lambda : process(state, SW)
+begin
+    -- defaults
+    DIGIT_select <= "1111";   -- all digits off (active low)
+    LEDs <= BLANK;
+    digit_value <= "0000";
+
+    case state is
+        when DIG0 =>
+            DIGIT_select <= "1110";      -- AN0 ON
+            digit_value <= SW(3 downto 0);
+
+        when DIG1 =>
+            DIGIT_select <= "1101";      -- AN1 ON
+            digit_value <= SW(7 downto 4);
+
+        when DIG2 =>
+            DIGIT_select <= "1011";      -- AN2 ON
+            LEDs <= BLANK;
+
+        when DIG3 =>
+            DIGIT_select <= "0111";      -- AN3 ON
+            LEDs <= BLANK;
+    end case;
+
+    -- 7-segment decoder
+    case digit_value is
+        when "0000" => LEDs <= ZERO;
+        when "0001" => LEDs <= ONE;
+        when "0010" => LEDs <= TWO;
+        when "0011" => LEDs <= THREE;
+        when "0100" => LEDs <= FOUR;
+        when "0101" => LEDs <= FIVE;
+        when "0110" => LEDs <= SIX;
+        when "0111" => LEDs <= SEVEN;
+        when "1000" => LEDs <= EIGHT;
+        when "1001" => LEDs <= NINE;
+        when others => LEDs <= BLANK;
+    end case;
+end process;
+
+end rtl;
