@@ -70,3 +70,22 @@ begin
     end if;
 end process;
 
+
+------------------------------------------
+delta : process(counter_cs, max_value)
+begin
+    -- If max is ZERO → stay at ZERO
+    if max_value = "0000" then
+        counter_ns <= (others => '0');
+
+    -- If current count reached max → wrap to ZERO
+    elsif counter_cs(29 downto 26) = max_value then
+        counter_ns <= (others => '0');
+
+    -- Otherwise → increment
+    else
+        counter_ns <= counter_cs + 1;
+    end if;
+end process;
+
+
