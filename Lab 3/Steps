@@ -1,0 +1,64 @@
+-- Signal Setup ---
+-- Define states
+type state_type is (S0, S1, S2, S3);
+signal current_state : state_type := S0;
+signal next_state    : state_type;
+
+-- Clock divider counter
+signal counter : integer range 0 to MAX := 0;
+
+-- Digit values (from switches or other source)
+signal digit0, digit1, digit2, digit3 : std_logic_vector(7 downto 0);
+
+---sync Process : Handles reset, updates state, and slows down the FSM with a counter ----
+
+process(clk, rst)
+begin
+  if rst = '1' then
+    current_state <= S0;
+    counter <= 0;
+  elsif rising_edge(clk) then
+    -- Clock divider
+    if counter = MAX then
+      current_state <= next_state;
+      counter <= 0;
+    else
+      counter <= counter + 1;
+    end if;
+  end if;
+end process;
+
+--delta process: State Transition -----
+
+process(current_state)
+begin
+  case current_state is
+    when S0 => next_state <= S1;
+    when S1 => next_state <= S2;
+    when S2 => next_state <= S3;
+    when S3 => next_state <= S0;
+  end case;
+end process;
+
+--lambda Process: Drives outputs based on the active state. Each digit gets its turn -----
+
+process(current_state, digit0, digit1, digit2, digit3)
+begin
+  case current_state is
+    when S0 =>
+      DIGIT_select <= "1110";  -- AN0 active (low)
+      LEDs <= digit0;          -- pattern for digit 0
+    when S1 =>
+      DIGIT_select <= "1101";  -- AN1 active
+      LEDs <= digit1;
+    when S2 =>
+      DIGIT_select <= "1011";  -- AN2 active
+      LEDs <= digit2;
+    when S3 =>
+      DIGIT_select <= "0111";  -- AN3 active
+      LEDs <= digit3;
+  end case;
+end process;
+
+
+
