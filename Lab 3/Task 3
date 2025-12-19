@@ -75,36 +75,34 @@ begin
 
     ---------------------------------
     -- combinatorial process delta -- Determines the next stage. DIG1 -> DIG2 -----
-    delta : process(counter_cs)
-    
-     variable max : unsigned (3 downto 0);
-     variable sw_max : unsigned(3 downto 0); 
-     variable max_state : unsigned(3 downto 0);
-     
-    begin
-    
-    -- TODO
-   max:= counter_cs(29 downto 26);
-   sw_max := unsigned(sw(3 downto 0));
-    
-  
+   delta : process(counter_cs, SW)
+    variable digit     : unsigned(3 downto 0);
+    variable sw_max    : unsigned(3 downto 0);
+    variable max_state : unsigned(3 downto 0);
+begin
+    digit  := counter_cs(29 downto 26);
+    sw_max := unsigned(SW(3 downto 0));
+
+    -- Clamp maximum to 9 (decimal)
     if sw_max >= "1001" then
         max_state := "1001";
     else
         max_state := sw_max;
-    
-    if max > max_state then
-    counter_ns <= (others => '0');
-    
-    elsif (max = max_state) and (counter_cs(25 downto 0) = (25 downto 0 => '1')) then
-    counter_ns <= (others =>'0');
-    
-    else 
-    
+    end if;
+
+    -- If max is zero → stay at zero
+    if max_state = "0000" then
+        counter_ns <= (others => '0');
+
+    -- If digit reached max → wrap
+    elsif digit = max_state then
+        counter_ns <= (others => '0');
+
+    -- Otherwise increment
+    else
         counter_ns <= counter_cs + 1;
     end if;
-    
-    end process;
+end process;
 
 
     ---------------------------------
