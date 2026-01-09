@@ -28,16 +28,16 @@ constant LOAD   : std_logic_vector(1 downto 0) := "10";
 constant STORE  : std_logic_vector(1 downto 0) := "11";
 
 -- opcode (ALU) constants
---constant OPCODE_MOV : std_logic_vector(3 downto 0) := ;
---constant OPCODE_ADD : std_logic_vector(3 downto 0) := ;
---constant OPCODE_SUB : std_logic_vector(3 downto 0) := ;
---constant OPCODE_MUL : std_logic_vector(3 downto 0) := ;
---constant OPCODE_AND : std_logic_vector(3 downto 0) := ;
---constant OPCODE_OR  : std_logic_vector(3 downto 0) := ;
---constant OPCODE_NOT : std_logic_vector(3 downto 0) := ;
---constant OPCODE_XOR : std_logic_vector(3 downto 0) := ;
---constant OPCODE_SHL : std_logic_vector(3 downto 0) := ;
---constant OPCODE_SHR : std_logic_vector(3 downto 0) := ;
+constant OPCODE_MOV : std_logic_vector(3 downto 0) := "0000"; -- Move/Copy 
+constant OPCODE_ADD : std_logic_vector(3 downto 0) := "0001"; -- Addition 
+constant OPCODE_SUB : std_logic_vector(3 downto 0) := "0010"; -- Subtraction 
+constant OPCODE_MUL : std_logic_vector(3 downto 0) := "0011"; -- Multiplication 
+constant OPCODE_AND : std_logic_vector(3 downto 0) := "0110"; -- Logical AND 
+constant OPCODE_OR  : std_logic_vector(3 downto 0) := "0111"; -- Logical OR 
+constant OPCODE_NOT : std_logic_vector(3 downto 0) := "0101"; -- Logical NOT 
+constant OPCODE_XOR : std_logic_vector(3 downto 0) := "0100"; -- Logical XOR 
+constant OPCODE_SHL : std_logic_vector(3 downto 0) := "1000"; -- Shift left 
+constant OPCODE_SHR : std_logic_vector(3 downto 0) := "1001"; -- Shift right
 
 -- branch condition constants
 constant ISEQUAL  : std_logic_vector(3 downto 0) := "0000";
