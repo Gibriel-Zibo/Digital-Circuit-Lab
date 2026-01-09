@@ -92,8 +92,39 @@ end process;
 -- instruction decoder
 id: process(instruction_s)
 begin
--- TODO: insert instruction decoder logic for PART 1
--- ...
+    -- 1. Default assignments to prevent latches
+    opgroup_s <= instruction_s(15 downto 14);
+    opcode_s  <= (others => '0');
+    src1_s    <= (others => '0');
+    src0_s    <= (others => '0');
+    dst_s     <= (others => '0');
+    address_s <= (others => '0');
+    offset_s  <= (others => '0');
+    cond_s    <= (others => '0');
+
+    -- 2. Decode based on Opgroup (Bits 15-14)
+    case instruction_s(15 downto 14) is
+        when REGREG => -- "00"
+            opcode_s <= instruction_s(13 downto 10); -- ALU Opcode [cite: 450, 471]
+            src1_s   <= instruction_s(8 downto 6);   -- Source Register 1 [cite: 451, 471]
+            src0_s   <= instruction_s(5 downto 3);   -- Source Register 0 [cite: 452, 471]
+            dst_s    <= instruction_s(2 downto 0);   -- Destination Register [cite: 456, 471]
+        
+        when LOAD =>   -- "10"
+            address_s <= instruction_s(13 downto 3); -- 11-bit Memory Address [cite: 458, 471]
+            dst_s     <= instruction_s(2 downto 0);  -- Destination Register [cite: 460, 471]
+            
+        when STORE =>  -- "11"
+            address_s <= instruction_s(13 downto 3); -- 11-bit Memory Address [cite: 463, 471]
+            src0_s    <= instruction_s(2 downto 0);  -- Source Register (Data to store) [cite: 464, 471]
+            
+        when BRANCH => -- "01"
+            offset_s  <= instruction_s(13 downto 4); -- 10-bit PC Offset [cite: 468, 471]
+            cond_s    <= instruction_s(3 downto 0);  -- Branch Condition [cite: 469, 471]
+            
+        when others =>
+            null;
+    end case;
 end process;
 
 ---------------------------------
