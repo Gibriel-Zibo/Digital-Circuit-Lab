@@ -69,6 +69,16 @@ constant pmem: rom_t := (
 -- insert your machine code here
 -- ...
 
+-- P1.3: Additional ALU instructions
+--  sub r3, r0, r2: (r3 = 56 - 7 = 49)
+    ("0000100010000011"),
+--  shl r4, r3: (r4 = 49 << 1 = 98)
+    ("0010000000011100"),
+--  and r5, r4, r0: (r5 = 98 AND 56)
+    ("0001100000100101"),
+--  xor r6, r5, r2: (r6 = r5 XOR 7)
+    ("0001000010101110"),
+
 --  st r0, x001:    11 000_0000_0001 000 (stores r0 to DMEM[1])
 	("1100000000001000"),   
 
