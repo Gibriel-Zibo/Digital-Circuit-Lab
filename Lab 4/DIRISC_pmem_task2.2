@@ -58,16 +58,16 @@ type rom_t is array (natural range <>) of std_logic_vector(15 downto 0);
 -- definition of machine code instructions---- Task 2.2
 constant pmem: rom_t := (
     -- 1. LOAD r1, x400 (Read Switches into register 1)
-    -- Group: 10 | Addr: 100 0000 0000 | Dst: 001
-    ("1010000000000001"), 
+    -- Group: 10 | Addr: 100 0000 0010 | Dst: 001
+    ("1010000000010001"), 
     
     -- 2. SHL r2, r1 (Shift r1 left by 1 and store in r2)
     -- Group: 00 | Op: 1000 | Bit9: 0 | src1: 000 | src0: 001 | dst: 010
     ("0010000000001010"), 
     
     -- 3. STORE r2, x401 (Write register 2 to LEDs)
-    -- Group: 11 | Addr: 100 0000 0001 | src0: 010
-    ("1110000000001010"), 
+    -- Group: 11 | Addr: 100 0000 0000 | src0: 010
+    ("1110000000000010"), 
     
     -- 4. BRANCH ALWAYS to address 0 (The infinite loop)
     -- Group: 01 | Offset: 0000000000 | Cond: 1010
@@ -76,7 +76,7 @@ constant pmem: rom_t := (
     -- Padding with NOP
     (x"0000")
 );
-  
+ 
 begin
 
 ---------------------------------
